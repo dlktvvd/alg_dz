@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int rec(int sum, const vector<int>& coins, vector<int>& memo, int INF)
+int rec(int sum, vector<int>& coins, vector<int>& memo, int INF)
 {
     if (sum < 0) return INF;
     if (sum == 0) return 0;
@@ -21,7 +21,7 @@ int rec(int sum, const vector<int>& coins, vector<int>& memo, int INF)
     return best;
 }
 
-int coinChange(vector<int>& coins, int amount)
+int recursiveCoinChange(vector<int>& coins, int amount)
 {
     if (amount < 0) return -1;
     if (amount == 0) return 0;
@@ -35,7 +35,4 @@ int coinChange(vector<int>& coins, int amount)
     return (ans >= INF) ? -1 : ans;
 }
 
-int main()
-{
-    return 0;
-}
+

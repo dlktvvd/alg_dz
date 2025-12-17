@@ -1,11 +1,9 @@
-﻿#include <iostream>
-#include <vector>
-#include <algorithm>
+﻿#include <vector>
 #include <climits>
 
 using namespace std;
 
-int coinChange(vector<int>& coins, int amount) {
+int dpCoinChange(vector<int>& coins, int amount) {
     if (amount < 0) return -1;
     if (amount == 0) return 0;
 
@@ -27,7 +25,3 @@ int coinChange(vector<int>& coins, int amount) {
     return dp[amount];
 }
 
-int main() {
-
-    return 0;
-}
