@@ -1,9 +1,6 @@
 ﻿#include <iostream>
-#include <fstream>
 #include <vector>
 #include <chrono>
-#include <string>
-#include <sstream>
 
 using namespace std;
 using namespace chrono;
@@ -15,10 +12,12 @@ int bfsCoinChange(vector<int>& coins, int amount);
 int bruteForceCoinChange(vector<int>& coins, int amount);
 
 int main() {
-    string files[] = { "test1.txt", "test2.txt", "test3.txt",
-                      "test4.txt", "test5.txt", "test6.txt", "test7.txt" };
+    struct Alg {
+        string name;
+        string student;
+        int (*func)(vector<int>&, int);
+    };
 
-    struct Alg { string name; string student; int (*func)(vector<int>&, int); };
     Alg algs[] = {
         {"Greedy", "Bogunova", greedyCoinChange},
         {"DP", "Lashenova", dpCoinChange},
@@ -27,31 +26,50 @@ int main() {
         {"BruteForce", "Ivakin", bruteForceCoinChange}
     };
 
-    for (string file : files) {
-        ifstream f(file);
-        string line;
-        getline(f, line);
+    vector<vector<int>> allCoins = {
+        {1, 2, 5, 10, 20, 50},
+        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+        {1, 7, 13, 24, 31, 45, 57, 65, 79, 89, 92, 105, 120},
+        {10, 20, 50},
+        {1},
+        {1, 2, 5, 10, 20, 50, 140, 230, 450, 790, 940, 1080, 2800, 4300, 5700  }
+    };
 
-        vector<int> coins;
-        stringstream ss(line);
-        int coin;
-        while (ss >> coin) coins.push_back(coin);
+    vector<int> amounts = { 220, 50, 500, 37, 500, 15000 };
 
-        int amount;
-        f >> amount;
+    for (int testNum = 0; testNum < 7; testNum++) {
+        cout << "Test " << (testNum + 1) << ": coins = {";
 
-        cout << "File: " << file << " (amount=" << amount
-            << ", coins=" << coins.size() << ")\n";
+        vector<int> coins = allCoins[testNum];
+        int amount = amounts[testNum];
 
-        for (Alg a : algs) {
+        for (int j = 0; j < coins.size(); j++) {
+            cout << coins[j];
+            if (j < coins.size() - 1) cout << ", ";
+        }
+
+        cout << "}, amount = " << amount << "\n";
+
+        for (int algNum = 0; algNum < 5; algNum++) {
+            Alg a = algs[algNum];
             vector<int> copy = coins;
+
+            const int REPEAT = 1000;
+
             auto start = high_resolution_clock::now();
-            int result = a.func(copy, amount);
+            int result = 0;
+
+            for (int r = 0; r < REPEAT; r++) {
+                vector<int> temp = copy;
+                result = a.func(temp, amount);
+            }
+
             auto end = high_resolution_clock::now();
-            auto time = duration_cast<microseconds>(end - start);
+            auto total_time = duration_cast<microseconds>(end - start);
+            int avg_time = total_time.count() / REPEAT;  // целое число
 
             cout << "    " << a.name << " (" << a.student << "): "
-                << time.count() << "mcs, result=" << result << "\n";
+                << avg_time << "mcs, result=" << result << "\n";
         }
         cout << endl;
     }
