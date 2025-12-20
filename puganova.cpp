@@ -1,6 +1,9 @@
 ﻿#include <iostream>
+#include <fstream>
 #include <vector>
 #include <chrono>
+#include <string>
+#include <sstream>
 
 using namespace std;
 using namespace chrono;
@@ -26,50 +29,54 @@ int main() {
         {"BruteForce", "Ivakin", bruteForceCoinChange}
     };
 
-    vector<vector<int>> allCoins = {
-        {1, 2, 5, 10, 20, 50},
-        {1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-        {1, 7, 13, 24, 31, 45, 57, 65, 79, 89, 92, 105, 120},
-        {10, 20, 50},
-        {1},
-        {1, 2, 5, 10, 20, 50, 140, 230, 450, 790, 940, 1080, 2800, 4300, 5700  }
+    vector<int> coins1 = { 1, 5, 10, 20, 50 };
+    int amount1 = 1000;
+
+    vector<int> coins2 = { 1, 2, 3, 4,  5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
+    int amount2 = 100;
+
+    vector<int> coins3 = { 1, 2, 9, 17, 23, 65, 72, 81 };
+    int amount3 = 1000;
+
+    vector<int> coins4 = { 10, 20, 30 };
+    int amount4 = 39;
+
+    vector<int> coins5 = { 1 };
+    int amount5 = 5000;
+
+    vector<int> coins6 = { 1, 1000, 2000, 3000, 5000 };
+    int amount6 = 20000;
+
+    vector<pair<vector<int>, int>> tests = {
+        {coins1, amount1},
+        {coins2, amount2},
+        {coins3, amount3},
+        {coins4, amount4},
+        {coins5, amount5},
+        {coins6, amount6},
     };
 
-    vector<int> amounts = { 220, 50, 500, 37, 500, 15000 };
+    
+    for (int i = 0; i < tests.size(); i++) {
+        cout << "Test " << (i + 1) << ": coins = {";
 
-    for (int testNum = 0; testNum < 7; testNum++) {
-        cout << "Test " << (testNum + 1) << ": coins = {";
-
-        vector<int> coins = allCoins[testNum];
-        int amount = amounts[testNum];
-
+        vector<int> coins = tests[i].first;
         for (int j = 0; j < coins.size(); j++) {
             cout << coins[j];
             if (j < coins.size() - 1) cout << ", ";
         }
 
-        cout << "}, amount = " << amount << "\n";
+        cout << "}, amount = " << tests[i].second << "\n";
 
-        for (int algNum = 0; algNum < 5; algNum++) {
-            Alg a = algs[algNum];
+        for (Alg a : algs) {
             vector<int> copy = coins;
-
-            const int REPEAT = 1000;
-
             auto start = high_resolution_clock::now();
-            int result = 0;
-
-            for (int r = 0; r < REPEAT; r++) {
-                vector<int> temp = copy;
-                result = a.func(temp, amount);
-            }
-
+            int result = a.func(copy, tests[i].second);
             auto end = high_resolution_clock::now();
-            auto total_time = duration_cast<microseconds>(end - start);
-            int avg_time = total_time.count() / REPEAT;  // целое число
+            auto time = duration_cast<microseconds>(end - start);
 
             cout << "    " << a.name << " (" << a.student << "): "
-                << avg_time << "mcs, result=" << result << "\n";
+                << time.count() << "mcs, result=" << result << "\n";
         }
         cout << endl;
     }
